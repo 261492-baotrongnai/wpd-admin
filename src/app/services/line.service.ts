@@ -2,8 +2,10 @@ import axios from "axios";
 
 export function lineLogin() {
   const lineLoginChannelId = process.env.NEXT_PUBLIC_CHANNEL_ID;
-  console.log("lineLoginChannelId", lineLoginChannelId);
-  const redirectUrl = `${"https://4pg05g3k-3000.asse.devtunnels.ms/callback"}`;
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    "https://4pg05g3k-3000.asse.devtunnels.ms";
+  const redirectUrl = `${baseUrl}/callback`;
   const scope = "profile%20openid%20email";
   const lineLoginUrl = `https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${lineLoginChannelId}&redirect_uri=${redirectUrl}&scope=${scope}&state=12w3xt3x`;
 
