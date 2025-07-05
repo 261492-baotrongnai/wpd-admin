@@ -8,8 +8,6 @@ export default function CallbackPage() {
 
   useEffect(() => {
     getLineToken().then((res) => {
-      // handle response
-      console.log(res.data);
       registerWithIdToken(res.data.id_token).then((res) => {
         setResponse(res.data);
       });
