@@ -15,7 +15,10 @@ export function lineLogin() {
 export function getLineToken() {
   const lineLoginChannelId = process.env.NEXT_PUBLIC_CHANNEL_ID;
   const lineLoginChannelSecret = process.env.NEXT_PUBLIC_CHANNEL_SECRET;
-  const redirectUrl = `${"https://4pg05g3k-3000.asse.devtunnels.ms/callback"}`;
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    "https://4pg05g3k-3000.asse.devtunnels.ms";
+  const redirectUrl = `${baseUrl}/callback`;
 
   const url = `https://api.line.me/oauth2/v2.1/token`;
   const searchParams = new URLSearchParams(window.location.search);
