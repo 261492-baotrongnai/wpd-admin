@@ -1,15 +1,19 @@
 "use client";
 import { useEffect, useState } from "react";
 import { getLineToken } from "../services/line.service";
-import { registerWithIdToken } from "../services/auth.service";
+import { getInfo, login } from "../services/auth.service";
 
 export default function CallbackPage() {
   const [response, setResponse] = useState<unknown | null>(null);
 
   useEffect(() => {
     getLineToken().then((res) => {
-      registerWithIdToken(res.data.id_token).then((res) => {
+      login(res.data.id_token).then((res) => {
         setResponse(res.data);
+        getInfo().then((res) => {
+          console.log("User info:", res.data);
+          setResponse(res.data);
+        });
       });
     });
   }, []);
