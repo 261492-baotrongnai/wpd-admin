@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { getApiClient } from "../services/api.service";
 
 export type Program = {
+  id: number;
   name: string;
   hospitalName: string;
   code: string;

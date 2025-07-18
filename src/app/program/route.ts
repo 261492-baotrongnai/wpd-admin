@@ -11,6 +11,13 @@ export async function GET() {
   const apiClient = await getApiClient(authToken);
 
   const programs = await apiClient.get(`/program/info`);
+  cookieStore.set("programs", JSON.stringify(programs.data), {
+    path: "/",
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  });
+
   const response = NextResponse.redirect(
     `${process.env.NEXT_PUBLIC_BASE_URL}/program/pages`
   );

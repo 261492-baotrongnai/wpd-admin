@@ -21,7 +21,7 @@ export default async function ProgramsPage() {
 
       {programs ? (
         programs.map((program: Program) => (
-          <ProgramCard key={program.code} program={program} />
+          <ProgramCard key={program.id} program={program} />
         ))
       ) : (
         <p>Loading...</p>
