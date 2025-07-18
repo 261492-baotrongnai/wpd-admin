@@ -31,7 +31,7 @@ export async function handleSubmit(formData: FormData) {
     );
 
     // Use redirect from next/navigation instead of NextResponse
-    redirect("/program/pages");
+    redirect("/program");
   } catch (error) {
     console.error("Error creating program:", error);
     // Handle error appropriately
