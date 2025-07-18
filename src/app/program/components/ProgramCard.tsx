@@ -1,4 +1,4 @@
-import { Program } from "../program.service";
+import { Program } from "../program";
 import "./styles.css";
 export default function ProgramCard({ program }: { program: Program }) {
   return (

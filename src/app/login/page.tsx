@@ -1,12 +1,12 @@
-"use client";
+import { getLineLoginUrl } from "../services/line.service";
 
-import { lineLogin } from "../services/line.service";
-
-export default function LoginPage() {
+export default async function LoginPage() {
   return (
     <div>
       <h1>Login Page</h1>
-      <button onClick={() => lineLogin()}> line </button>
+      <a href={await getLineLoginUrl()}>
+        <button type="button">Login with LINE</button>
+      </a>
     </div>
   );
 }

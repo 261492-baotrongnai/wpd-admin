@@ -1,18 +1,17 @@
+"use server";
 import axios from "axios";
 
-export function lineLogin() {
+export async function getLineLoginUrl() {
   const lineLoginChannelId = process.env.NEXT_PUBLIC_CHANNEL_ID;
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL ||
     "https://4pg05g3k-3000.asse.devtunnels.ms";
   const redirectUrl = `${baseUrl}/callback`;
   const scope = "profile%20openid%20email";
-  const lineLoginUrl = `https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${lineLoginChannelId}&redirect_uri=${redirectUrl}&scope=${scope}&state=12w3xt3x`;
-
-  window.location.href = lineLoginUrl;
+  return `https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${lineLoginChannelId}&redirect_uri=${redirectUrl}&scope=${scope}&state=12w3xt3x`;
 }
 
-export function getLineToken() {
+export async function getLineToken(code: string) {
   const lineLoginChannelId = process.env.NEXT_PUBLIC_CHANNEL_ID;
   const lineLoginChannelSecret = process.env.NEXT_PUBLIC_CHANNEL_SECRET;
   const baseUrl =
@@ -21,8 +20,6 @@ export function getLineToken() {
   const redirectUrl = `${baseUrl}/callback`;
 
   const url = `https://api.line.me/oauth2/v2.1/token`;
-  const searchParams = new URLSearchParams(window.location.search);
-  const code = searchParams.get("code") || "";
   const params = new URLSearchParams({
     grant_type: "authorization_code",
     code: code,
@@ -31,9 +28,15 @@ export function getLineToken() {
     client_secret: lineLoginChannelSecret || "",
   });
 
-  return axios.post(url, params.toString(), {
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-  });
+  try {
+    const response = await axios.post(url, params.toString(), {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error("Error getting LINE token:", error);
+    throw error;
+  }
 }

@@ -1,9 +1,10 @@
+"use server";
 import axios from "axios";
-import { setAuthToken } from "./api.service";
+import { getAuthToken } from "../actions/auth";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
-export function registerWithIdToken(idToken: string) {
+export async function registerWithIdToken(idToken: string) {
   const url = `${API_URL}/admin/line-register`;
   return axios.post(
     url,
@@ -27,24 +28,17 @@ export async function login(idToken: string) {
       },
     }
   );
-  console.log("Response data:", response.data);
 
-  if (response.data.access_token) {
-    // clear previous auth token
-    localStorage.removeItem("auth_token");
-
-    setAuthToken(response.data.access_token);
-    console.log("auth_token:", response.data.access_token);
-  }
-  return response;
+  return response.data.access_token;
 }
 
-export function getInfo() {
-  console.log(`auth_token: ${localStorage.getItem("auth_token")}`);
+export async function getInfo() {
+  const authToken = await getAuthToken();
+  
   const url = `${API_URL}/admin/info`;
   return axios.get(url, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+      Authorization: `Bearer ${authToken}`,
     },
   });
 }
