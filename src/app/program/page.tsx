@@ -1,15 +1,13 @@
 "use server";
-import { Program } from "../program";
-import ProgramCard from "../components/ProgramCard";
+import { Program } from "./program";
+import ProgramCard from "./components/ProgramCard";
 
-import "../components/styles.css";
+import "./components/styles.css";
 import Link from "next/link";
-import { cookies } from "next/headers";
+import { getProgramInfo } from "../actions/get_program_info";
 
 export default async function ProgramsPage() {
-  const cookieStore = await cookies();
-  let programs: Program[] = [];
-  programs = JSON.parse(cookieStore.get("programs")?.value || "[]");
+  const programs = await getProgramInfo();
   return (
     <div>
       <div className="header">

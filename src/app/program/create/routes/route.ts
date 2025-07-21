@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
 
   const result = await apiClient.post(`/program/create`, body);
   const response = NextResponse.redirect(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/program/pages`
+    `${process.env.NEXT_PUBLIC_BASE_URL}/program`
   );
   response.cookies.set("create_program_result", JSON.stringify(result.data), {
     path: "/",
