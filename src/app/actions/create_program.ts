@@ -17,9 +17,7 @@ export async function handleSubmit(formData: FormData) {
     const apiClient = await getApiClient(token);
 
     const result = await apiClient.post(`/program/create`, program);
-    const programs = await apiClient.get(`/program/info`);
 
-    // Store the result in cookies
     (await cookies()).set(
       "create_program_result",
       JSON.stringify(result.data),
@@ -30,18 +28,11 @@ export async function handleSubmit(formData: FormData) {
         sameSite: "lax",
       }
     );
-    (await cookies()).set("programs", JSON.stringify(programs.data), {
-      path: "/",
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-    });
 
-    // Use redirect from next/navigation instead of NextResponse
+
     redirect("/program");
   } catch (error) {
     console.error("Error creating program:", error);
-    // Handle error appropriately
     throw error;
   }
 }
