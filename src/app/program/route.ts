@@ -1,7 +1,7 @@
 "use server";
-import { NextResponse } from "next/server";
 import { getApiClient } from "@/app/services/api.service";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export async function GET() {
   const cookieStore = await cookies();
@@ -18,14 +18,5 @@ export async function GET() {
     sameSite: "lax",
   });
 
-  const response = NextResponse.redirect(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/program/pages`
-  );
-  response.cookies.set("programs", JSON.stringify(programs.data), {
-    path: "/",
-    httpOnly: true,
-    secure: true,
-    sameSite: "lax",
-  });
-  return response;
+  return redirect("/program/pages");
 }
