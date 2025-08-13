@@ -1,6 +1,7 @@
 "use server";
 
 import ComponentCard from "@/components/common/ComponentCard";
+import { Organization } from "@/types/organization.type";
 import { ProgramTable } from "@/types/program.type";
 import { cookies } from "next/headers";
 
@@ -23,7 +24,7 @@ export default async function ProgramDetailPage() {
           {detail.program.organization
             ? typeof detail.program.organization === "object" &&
               "name" in detail.program.organization
-              ? (detail.program.organization as any).name
+              ? (detail.program.organization as Organization).thai_name
               : String(detail.program.organization)
             : "No organization"}
         </p>

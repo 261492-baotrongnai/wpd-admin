@@ -13,14 +13,6 @@ export default function OrganizaitonsTable({
 }: {
   tableData: Organization[];
 }) {
-  const handleOrganizationClick = (organization_detail: Organization) => {
-    document.cookie = `organization=${encodeURIComponent(
-      JSON.stringify(organization_detail)
-    )}; path=/`;
-    window.location.href = `/organization/${encodeURIComponent(
-      organization_detail.thai_name
-    )}`;
-  };
 
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">

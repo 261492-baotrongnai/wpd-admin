@@ -1,6 +1,5 @@
 "use client";
 
-import ComponentCard from "@/components/common/ComponentCard";
 import ProgramHeaderTabs from "@/layout/ProgramHeader";
 import React from "react";
 
@@ -15,8 +14,7 @@ export default function ProgramLayout({
       <ProgramHeaderTabs />
 
       {/* Card Body */}
-    {children}
-    
+      {children}
     </div>
   );
 }

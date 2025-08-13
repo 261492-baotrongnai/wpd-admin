@@ -1,5 +1,4 @@
 "use client";
-import { getProgramTable } from "@/actions/get_program_info";
 import Badge from "@/components/ui/badge/Badge";
 import {
   Table,
