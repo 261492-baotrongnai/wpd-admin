@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 type NavItem = {
   name: string;
@@ -11,7 +11,7 @@ type NavItem = {
 const programItems: NavItem[] = [
   {
     name: "Details",
-    path: "/details",
+    path: "/",
   },
   {
     name: "Users",
@@ -23,17 +23,19 @@ const programItems: NavItem[] = [
   },
 ];
 
-// /program/[program_name]/details
+// /program/[program_name]
 // /program/[program_name]/users
 // /program/[program_name]/admins
 const ProgramHeaderTabs: React.FC = () => {
   const pathname = usePathname();
-  let programName = pathname.split("/")[2];
+  const [programName, setProgramName] = useState("");
+
   useEffect(() => {
     const pathParts = pathname.split("/");
-    programName = pathParts[2];
-    if (programName) {
-      document.title = `Program: ${programName}`;
+    const name = pathParts[2];
+    setProgramName(name);
+    if (name) {
+      document.title = `Program: ${name}`;
     } else {
       document.title = "Program Details";
     }
@@ -104,7 +106,7 @@ const ProgramHeaderTabs: React.FC = () => {
             <li>
               <Link
                 className="inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400"
-                href={`/program/${programName}/details`}
+                href={`/program/${programName}`}
               >
                 {decodeURIComponent(programName)}
                 {pathname.split("/").slice(3).join(" / ") !== "details" && (

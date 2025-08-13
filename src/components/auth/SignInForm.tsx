@@ -6,9 +6,9 @@ import Button from "@/components/ui/button/Button";
 import { EyeCloseIcon, EyeIcon } from "@/icons";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import LineLogo from "@/components/auth/logo/LINE_Brand_icon.png";
-import axios from "axios";
+
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
