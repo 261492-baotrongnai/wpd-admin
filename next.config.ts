@@ -15,6 +15,16 @@ const nextConfig: NextConfig = {
       ].filter((origin): origin is string => typeof origin === "string"),
     },
   },
+  images: {
+    domains: ["wpd-bucket.sgp1.cdn.digitaloceanspaces.com"],
+  },
+  webpack(config: { module: { rules: { test: RegExp; use: string[] }[] } }) {
+    config.module.rules.push({
+      test: /\.svg$/,
+      use: ["@svgr/webpack"],
+    });
+    return config;
+  },
 };
 
 export default nextConfig;
