@@ -1,10 +1,11 @@
 "use server";
 import axios from "axios";
+import { redirect } from "next/navigation";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export async function getApiClient(token?: string) {
-  console.log("Loaded auth token:", token);
+  // console.log("Loaded auth token:", token);
   const apiClient = axios.create({
     baseURL: API_URL,
     headers: {
@@ -16,6 +17,10 @@ export async function getApiClient(token?: string) {
   apiClient.interceptors.response.use(
     (response) => response,
     (error) => {
+      if (error.response?.status === 401) {
+        console.error("Unauthorized request, redirecting to login");
+        redirect("/login");
+      }
       console.error("API error:", error);
       return Promise.reject(error);
     }

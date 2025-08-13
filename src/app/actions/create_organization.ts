@@ -4,21 +4,22 @@ import { getAuthToken } from "@/app/actions/auth";
 import { getApiClient } from "@/app/services/api.service";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
+import { OrganizationCreate } from "@/types/organization.type";
 
 export async function handleSubmit(formData: FormData) {
   try {
-    const program = {
-      name: formData.get("name"),
-      hospitalName: formData.get("organization"),
+    const organization: OrganizationCreate = {
+      thai_name: formData.get("thai_name") as string,
+      eng_name: formData.get("eng_name") as string,
     };
 
     const token = await getAuthToken();
     const apiClient = await getApiClient(token);
 
-    const result = await apiClient.post(`/program/create`, program);
+    const result = await apiClient.post(`/organizations/create`, organization);
 
     (await cookies()).set(
-      "create_program_result",
+      "create_organization_result",
       JSON.stringify(result.data),
       {
         path: "/",
@@ -27,10 +28,9 @@ export async function handleSubmit(formData: FormData) {
         sameSite: "lax",
       }
     );
-
-    redirect("/program");
   } catch (error) {
-    console.error("Error creating program:", error);
+    console.error("Error creating organization:", error);
     throw error;
   }
+  redirect("/organization");
 }
