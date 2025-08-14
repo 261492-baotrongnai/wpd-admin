@@ -11,7 +11,7 @@ type NavItem = {
 const programItems: NavItem[] = [
   {
     name: "Details",
-    path: "/",
+    path: "",
   },
   {
     name: "Users",
@@ -109,7 +109,7 @@ const ProgramHeaderTabs: React.FC = () => {
                 href={`/program/${programName}`}
               >
                 {decodeURIComponent(programName)}
-                {pathname.split("/").slice(3).join(" / ") !== "details" && (
+                {pathname.split("/").slice(3).join(" / ") !== "" && (
                   <svg
                     className="stroke-current"
                     width="17"
@@ -129,7 +129,7 @@ const ProgramHeaderTabs: React.FC = () => {
                 )}
               </Link>
             </li>
-            {pathname.split("/").slice(3).join(" / ") !== "details" && (
+            {pathname.split("/").slice(3).join(" / ") !== "" && (
               <li className="text-sm text-gray-800 dark:text-white/90">
                 {pathname.split("/").slice(3).join(" / ")}
               </li>
@@ -144,14 +144,14 @@ const ProgramHeaderTabs: React.FC = () => {
 const renderNavItems = (pathname: string, programName: string) => {
   return (
     <nav>
-      <ul className="flex space-x-4 justify-center bg-gray-100 p-1 rounded-md w-fit mr-auto">
+      <ul className="flex space-x-4 justify-center bg-white p-1 rounded-md w-fit mr-auto">
         {programItems.map((item) => (
           <li
             key={item.name}
             className={` ${
               pathname === `/program/${programName}${item.path}`
-                ? "bg-white text-black"
-                : "text-gray-600 hover:text-brand-500"
+                ? "bg-blue-100 text-blue-600"
+                : "text-gray-600 hover:bg-gray-100 dark:hover:bg-white/[0.05]"
             }   rounded-md px-3 py-2 transition-colors duration-200 min-w-[100px] text-center`}
           >
             <Link href={`/program/${programName}${item.path}`}>
