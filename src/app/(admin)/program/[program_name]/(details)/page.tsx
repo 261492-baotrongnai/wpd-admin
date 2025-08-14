@@ -20,14 +20,7 @@ export default async function ProgramDetailPage() {
     <ComponentCard title={`รายละเอียดโครงการ`}>
       <div>
         <h2>{detail.program.name}</h2>
-        <p>
-          {detail.program.organization
-            ? typeof detail.program.organization === "object" &&
-              "name" in detail.program.organization
-              ? (detail.program.organization as Organization).thai_name
-              : String(detail.program.organization)
-            : "No organization"}
-        </p>
+        <p>{detail.program.organization?.thai_name}</p>
         <p>Code: {detail.program.code}</p>
       </div>
     </ComponentCard>
