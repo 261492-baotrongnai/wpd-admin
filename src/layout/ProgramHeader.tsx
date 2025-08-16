@@ -35,7 +35,7 @@ const ProgramHeaderTabs: React.FC = () => {
     const name = pathParts[2];
     setProgramName(name);
     if (name) {
-      document.title = `Program: ${name}`;
+      document.title = `Program: ${decodeURIComponent(name)}`;
     } else {
       document.title = "Program Details";
     }

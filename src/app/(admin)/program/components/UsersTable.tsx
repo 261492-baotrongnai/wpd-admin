@@ -1,5 +1,4 @@
 "use client";
-import Badge from "@/components/ui/badge/Badge";
 import {
   Table,
   TableBody,
@@ -7,22 +6,41 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ProgramTable } from "@/types/program.type";
+import { User } from "@/types/user.types";
 
-interface ProgramsTableProps {
-  tableData: ProgramTable[];
+interface UsersTableProps {
+  tableData: User[];
 }
 
-export default function ProgramsTable({ tableData }: ProgramsTableProps) {
-  const handleProgramClick = (program_detail: ProgramTable) => {
+function lastRecord(lastRecordedAt: string): string {
+  const date = new Date(lastRecordedAt);
+  const now = new Date();
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+  if (diffInSeconds < 60) { // 60 seconds
+    return `${diffInSeconds} seconds ago`;
+  } else if (diffInSeconds < 3600) { // 60 minutes
+    return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+  } else if (diffInSeconds < 86400) { // 24 hours
+    return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+  } else if (diffInSeconds < 604800) { // 7 days
+    return `${Math.floor(diffInSeconds / 86400)} days ago`;
+  } else if (diffInSeconds < 2419200) { // 30 days
+    return `${Math.floor(diffInSeconds / 604800)} weeks ago`;
+  } else {
+    return new Date(lastRecordedAt).toLocaleDateString();
+  }
+}
+
+export default function UsersTable({ tableData }: UsersTableProps) {
+  const handleUserClick = (user: User) => {
     // You cannot use server-side cookies in a client component.
     // Use document.cookie or a client-side library instead.
-    document.cookie = `program_detail=${encodeURIComponent(
-      JSON.stringify(program_detail)
+    document.cookie = `user_detail=${encodeURIComponent(
+      JSON.stringify(user)
     )}; path=/`;
-    window.location.href = `/program/${encodeURIComponent(
-      program_detail.program.name
-    )}`;
+    // window.location.href = `/user/${encodeURIComponent(
+    //   user.id
+    // )}`;
   };
 
   return (
@@ -38,25 +56,19 @@ export default function ProgramsTable({ tableData }: ProgramsTableProps) {
                     isHeader
                     className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                   >
-                    Program
+                    ID
                   </TableCell>
                   <TableCell
                     isHeader
                     className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                   >
-                    Code
+                    internalId
                   </TableCell>
                   <TableCell
                     isHeader
                     className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                   >
-                    Organization
-                  </TableCell>
-                  <TableCell
-                    isHeader
-                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                  >
-                    Total users
+                    Last Recorded
                   </TableCell>
                 </TableRow>
               </TableHeader>
@@ -65,35 +77,25 @@ export default function ProgramsTable({ tableData }: ProgramsTableProps) {
               <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
                 {tableData.map((data) => (
                   <TableRow
-                    key={data.program.id}
+                    key={data.id}
                     className="hover:bg-gray-50 dark:hover:bg-white/[0.05] cursor-pointer"
-                    onClick={() => handleProgramClick(data)}
+                    onClick={() => handleUserClick(data)}
                   >
+                    <TableCell className="px-5 py-4 sm:px-6 text-start">
+                      {data.id}
+                    </TableCell>
                     <TableCell className="px-5 py-4 sm:px-6 text-start">
                       <div className="flex items-center gap-3">
                         <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                          {data.program.name}
+                          {data.internalId}
                         </span>
                       </div>
                     </TableCell>
-                    <TableCell
-                      className={`px-5 py-4 sm:px-6 text-start ${
-                        data.program.code ? "text-gray-800" : "text-gray-300"
-                      }`}
-                    >
-                      {data.program.code ? data.program.code : "No code"}
-                    </TableCell>
                     <TableCell className="px-5 py-4 sm:px-6 text-start">
-                      {data.program.organization?.thai_name ||
-                        data.program.organization?.eng_name ||
-                        "No organization"}
-                    </TableCell>
-                    <TableCell className="px-5 py-4 sm:px-6 text-start">
-                      {data.totalUser > 0 ? (
-                        <Badge variant="light">{data.totalUser} users</Badge>
-                      ) : (
-                        "No users"
-                      )}
+                      <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
+                        {lastRecord(data.last_recorded_at)}
+                        {/* {data.last_recorded_at ? ` (${new Date(data.last_recorded_at).toLocaleDateString()})` : ""} */}
+                      </span>
                     </TableCell>
                   </TableRow>
                 ))}

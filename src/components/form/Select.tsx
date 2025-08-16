@@ -12,6 +12,7 @@ interface SelectProps {
   className?: string;
   defaultValue?: string;
   error?: boolean;
+  size?: "sm" | "md" | "lg"; // Optional size prop
 }
 
 const Select: React.FC<SelectProps> = ({
@@ -21,6 +22,7 @@ const Select: React.FC<SelectProps> = ({
   className = "",
   defaultValue = "",
   error = false,
+  size = "md", // Default size
 }) => {
   // Manage the selected value
   const [selectedValue, setSelectedValue] = useState<string>(defaultValue);
@@ -42,7 +44,13 @@ const Select: React.FC<SelectProps> = ({
 
   return (
     <select
-      className={`h-11 w-full appearance-none rounded-lg border ${statusClass} px-4 py-2.5 pr-11 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-hidden focus:ring-3  dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 ${
+      className={`${
+        size === "sm"
+          ? "h-9 text-sm"
+          : size === "lg"
+          ? "h-12 text-lg"
+          : "h-11 text-md"
+      } w-full  appearance-none rounded-lg border ${statusClass} px-4 py-2.5 pr-11 shadow-theme-xs placeholder:text-gray-400 focus:outline-hidden focus:ring-3  dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 ${
         selectedValue
           ? "text-gray-800 dark:text-white/90"
           : "text-gray-400 dark:text-gray-400"
