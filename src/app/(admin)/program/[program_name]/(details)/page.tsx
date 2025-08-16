@@ -44,6 +44,7 @@ const userMetrics = (label: string, count: number) => {
 export default async function ProgramDetailPage() {
   const cookieStore = await cookies();
   const programCookie = cookieStore.get("program_detail")?.value;
+  
 
   if (!programCookie) return <p>Program not found or not loaded.</p>;
   let detail: ProgramDetail;

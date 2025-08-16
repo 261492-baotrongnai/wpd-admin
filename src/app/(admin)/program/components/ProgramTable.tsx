@@ -1,4 +1,5 @@
 "use client";
+import { setCookieProgramDetail } from "@/actions/update_program";
 import Badge from "@/components/ui/badge/Badge";
 import {
   Table,
@@ -15,15 +16,10 @@ interface ProgramsTableProps {
 
 export default function ProgramsTable({ tableData }: ProgramsTableProps) {
   const handleProgramClick = (program_detail: ProgramTable) => {
-    // You cannot use server-side cookies in a client component.
-    // Use document.cookie or a client-side library instead.
-    document.cookie = `program_detail=${encodeURIComponent(
-      JSON.stringify(program_detail)
-    )}; path=/; Secure; SameSite=Lax; `;
-    console.log("Program detail:", document.cookie);
-    window.location.href = `/program/${encodeURIComponent(
+    setCookieProgramDetail(
+      program_detail.program.id,
       program_detail.program.name
-    )}`;
+    );
   };
 
   return (

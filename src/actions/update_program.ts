@@ -1,6 +1,8 @@
 "use server";
 import { getApiClient } from "@/services/api.service";
 import { getAuthToken } from "./auth";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export async function updateProgramName(
   programId: number,
@@ -44,4 +46,18 @@ export async function updateProgramOrganizatio(
   } catch (error) {
     console.error("Error updating program organization:", error);
   }
+}
+
+export async function setCookieProgramDetail(
+  programId: number,
+  programName?: string
+) {
+  const cookieStore = await cookies();
+  cookieStore.set("program_detail", JSON.stringify({ program: { id: programId } }), {
+    path: "/",
+    sameSite: "lax",
+    secure: true,
+  });
+  console.log("Program detail cookie set:", cookieStore.get("program_detail"));
+  redirect(`/program/${encodeURIComponent(programName || "")}`);
 }
