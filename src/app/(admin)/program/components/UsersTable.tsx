@@ -16,15 +16,23 @@ function lastRecord(lastRecordedAt: string): string {
   const date = new Date(lastRecordedAt);
   const now = new Date();
   const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-  if (diffInSeconds < 60) { // 60 seconds
+  if (isNaN(diffInSeconds)) {
+    return "ยังไม่มีการบันทึก";
+  }
+  if (diffInSeconds < 60) {
+    // 60 seconds
     return `${diffInSeconds} seconds ago`;
-  } else if (diffInSeconds < 3600) { // 60 minutes
+  } else if (diffInSeconds < 3600) {
+    // 60 minutes
     return `${Math.floor(diffInSeconds / 60)} minutes ago`;
-  } else if (diffInSeconds < 86400) { // 24 hours
+  } else if (diffInSeconds < 86400) {
+    // 24 hours
     return `${Math.floor(diffInSeconds / 3600)} hours ago`;
-  } else if (diffInSeconds < 604800) { // 7 days
+  } else if (diffInSeconds < 604800) {
+    // 7 days
     return `${Math.floor(diffInSeconds / 86400)} days ago`;
-  } else if (diffInSeconds < 2419200) { // 30 days
+  } else if (diffInSeconds < 2419200) {
+    // 30 days
     return `${Math.floor(diffInSeconds / 604800)} weeks ago`;
   } else {
     return new Date(lastRecordedAt).toLocaleDateString();
