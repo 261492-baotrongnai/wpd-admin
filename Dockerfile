@@ -78,6 +78,11 @@ COPY package.json .
 COPY --from=deps /usr/src/app/node_modules ./node_modules
 COPY --from=build /usr/src/app/. ./.
 
+# Fix permissions for .next directory
+USER root
+RUN chown -R node:node /usr/src/app/.next
+USER node
+
 
 # Expose the port that the application listens on.
 EXPOSE 3000

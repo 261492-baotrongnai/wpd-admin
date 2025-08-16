@@ -19,7 +19,7 @@ export default function ProgramsTable({ tableData }: ProgramsTableProps) {
     // Use document.cookie or a client-side library instead.
     document.cookie = `program_detail=${encodeURIComponent(
       JSON.stringify(program_detail)
-    )}; path=/; Secure; SameSite=Lax`;
+    )}; path=/; Secure; SameSite=Lax; `;
     console.log("Program detail:", document.cookie);
     window.location.href = `/program/${encodeURIComponent(
       program_detail.program.name
