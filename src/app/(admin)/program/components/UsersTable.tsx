@@ -13,12 +13,13 @@ interface UsersTableProps {
 }
 
 function lastRecord(lastRecordedAt: string): string {
+  if (lastRecordedAt === null || lastRecordedAt === undefined) {
+    return "No records";
+  }
   const date = new Date(lastRecordedAt);
   const now = new Date();
   const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-  if (isNaN(diffInSeconds)) {
-    return "ยังไม่มีการบันทึก";
-  }
+
   if (diffInSeconds < 60) {
     // 60 seconds
     return `${diffInSeconds} seconds ago`;
