@@ -20,6 +20,7 @@ export default function ProgramsTable({ tableData }: ProgramsTableProps) {
     document.cookie = `program_detail=${encodeURIComponent(
       JSON.stringify(program_detail)
     )}; path=/`;
+    console.log("Program detail:", document.cookie);
     window.location.href = `/program/${encodeURIComponent(
       program_detail.program.name
     )}`;
