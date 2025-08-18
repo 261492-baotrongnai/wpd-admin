@@ -1,16 +1,10 @@
 "use server";
 
-import { getProgramInfo } from "@/actions/get_program_info";
+import { getProgramByCode } from "@/actions/get_program_info";
 import ComponentCard from "@/components/common/ComponentCard";
 import EditableInfoBox from "@/app/(admin)/program/components/EditableInfoBox";
 import { GroupIcon } from "@/icons";
 import { Program } from "@/types/program.type";
-import { cookies } from "next/headers";
-
-interface ProgramDetail {
-  program: Program;
-  totalParticipants: number;
-}
 
 const infoBox = (label: string, info: string) => {
   return (
@@ -41,16 +35,17 @@ const userMetrics = (label: string, count: number) => {
   );
 };
 
-export default async function ProgramDetailPage() {
-  const cookieStore = await cookies();
-  const programCookie = cookieStore.get("program_detail")?.value;
-  
-
-  if (!programCookie) return <p>Program not found or not loaded.</p>;
-  let detail: ProgramDetail;
+export default async function ProgramDetailPage({
+  params,
+}: {
+  params: Promise<{ code: string }>;
+}) {
+  let detail: Program;
+  const { code } = await params;
+  console.log("Program code:", code);
   try {
-    detail = JSON.parse(programCookie);
-    detail = await getProgramInfo(detail.program.id);
+    detail = await getProgramByCode(code);
+
     console.log("Program detail:", detail);
   } catch {
     return <p>Program data is corrupted.</p>;
@@ -65,29 +60,29 @@ export default async function ProgramDetailPage() {
             <div className="space-y-10 flex flex-col">
               {/* {infoBox("Program Name", detail.program.name)} */}
               <EditableInfoBox
-                programId={detail.program.id}
+                programId={detail.id}
                 label="Program Name"
-                info={detail.program.name}
+                info={detail.name}
                 editable={true}
               />
               <EditableInfoBox
-                programId={detail.program.id}
+                programId={detail.id}
                 label="Organization"
-                info={detail.program.organization?.thai_name || "N/A"}
+                info={detail.organization?.thai_name || "N/A"}
                 editable={true}
                 type="select"
               />
-              {infoBox("Code", detail.program.code)}
+              {infoBox("Code", detail.code)}
               {infoBox(
                 "Created at",
-                new Date(detail.program.createdAt).toLocaleDateString()
+                new Date(detail.createdAt).toLocaleDateString()
               )}
             </div>
           </ComponentCard>
         </div>
         {/* <!-- User Metric --> */}
         <div className="col-span-12 xl:col-span-4">
-          {userMetrics("ผู้เข้าร่วม", detail.totalParticipants)}
+          {userMetrics("ผู้เข้าร่วม", detail.users?.length || 0)}
         </div>
       </div>
     </>

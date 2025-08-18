@@ -1,3 +1,4 @@
+import { getProgramByCode } from "@/actions/get_program_info";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -31,15 +32,18 @@ const ProgramHeaderTabs: React.FC = () => {
   const [programName, setProgramName] = useState("");
 
   useEffect(() => {
-    const pathParts = pathname.split("/");
-    const name = pathParts[2];
-    setProgramName(name);
-    if (name) {
-      document.title = `Program: ${decodeURIComponent(name)}`;
-    } else {
-      document.title = "Program Details";
-    }
+    const fetchProgramName = async () => {
+      const program = await getProgramByCode(pathname.split("/")[2]);
+      setProgramName(program.code);
+    };
+    fetchProgramName();
   }, [pathname]);
+
+  useEffect(() => {
+    if (programName) {
+      document.title = `Program: ${programName}`;
+    }
+  }, [programName]);
 
   return (
     <>
@@ -154,6 +158,8 @@ const renderNavItems = (pathname: string, programName: string) => {
                 : "text-gray-600 hover:bg-gray-100 dark:hover:bg-white/[0.05]"
             }   rounded-md px-3 py-2 transition-colors duration-200 min-w-[100px] text-center`}
           >
+            {/* {pathname}
+            {`/program/${programName}${item.path}`} */}
             <Link href={`/program/${programName}${item.path}`}>
               {item.name}
             </Link>

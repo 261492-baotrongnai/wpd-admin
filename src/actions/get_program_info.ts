@@ -2,6 +2,29 @@
 import { getApiClient } from "../services/api.service";
 import { cookies } from "next/headers";
 
+export async function getProgramByCode(code: string) {
+  // console.log("Fetching program by code:", code);
+  try {
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth_token")?.value;
+    if (!authToken) {
+      throw new Error("Authentication token not found");
+    }
+    console.log("Auth token found:", authToken);
+    const apiClient = await getApiClient(authToken);
+    const response = await apiClient.get(`/program/find-by-code/${code}`);
+    console.log("Program fetched successfully:", response.data);
+    // await setProgramNameCookie(response.data.name);
+    if (response.status !== 200) {
+      throw new Error("Failed to fetch program by code");
+    }
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching program by code:", error);
+    throw error;
+  }
+}
+
 export async function getProgramInfo(programId: number) {
   try {
     const cookieStore = await cookies();
@@ -43,4 +66,11 @@ export async function getProgramTable() {
   }
 }
 
-
+export async function setProgramNameCookie(name: string) {
+  const cookieStore = await cookies();
+  cookieStore.set("program_name_header", name, {
+    path: "/",
+    sameSite: "lax",
+    secure: true,
+  });
+}
