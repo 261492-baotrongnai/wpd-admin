@@ -12,7 +12,7 @@ export async function getProgramByCode(code: string) {
     }
     console.log("Auth token found:", authToken);
     const apiClient = await getApiClient(authToken);
-    const response = await apiClient.get(`/program/find-by-code/${code}`);
+    const response = await apiClient.get(`/program/find-by-code?code=${code}`);
     console.log("Program fetched successfully:", response.data);
     // await setProgramNameCookie(response.data.name);
     if (response.status !== 200) {
