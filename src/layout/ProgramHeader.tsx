@@ -30,11 +30,13 @@ const programItems: NavItem[] = [
 const ProgramHeaderTabs: React.FC = () => {
   const pathname = usePathname();
   const [programName, setProgramName] = useState("");
+  const [programCode, setProgramCode] = useState("");
 
   useEffect(() => {
     const fetchProgramName = async () => {
       const program = await getProgramByCode(pathname.split("/")[2]);
-      setProgramName(program.code);
+      setProgramCode(program.code);
+      setProgramName(program.name);
     };
     fetchProgramName();
   }, [pathname]);
@@ -110,9 +112,9 @@ const ProgramHeaderTabs: React.FC = () => {
             <li>
               <Link
                 className="inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400"
-                href={`/program/${programName}`}
+                href={`/program/${programCode}`}
               >
-                {decodeURIComponent(programName)}
+                {programName}
                 {pathname.split("/").slice(3).join(" / ") !== "" && (
                   <svg
                     className="stroke-current"
