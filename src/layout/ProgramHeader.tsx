@@ -57,7 +57,7 @@ const ProgramHeaderTabs: React.FC = () => {
           >
             {decodeURIComponent(programName)}
           </h2>
-          {renderNavItems(pathname, programName)}
+          {renderNavItems(pathname, programName, programCode)}
         </div>
         <nav className="flex items-center">
           <ol className="flex items-center gap-1.5">
@@ -147,7 +147,7 @@ const ProgramHeaderTabs: React.FC = () => {
   );
 };
 
-const renderNavItems = (pathname: string, programName: string) => {
+const renderNavItems = (pathname: string, programName: string, programCode: string) => {
   return (
     <nav>
       <ul className="flex space-x-4 justify-center bg-white p-1 rounded-md w-fit mr-auto">
@@ -155,14 +155,14 @@ const renderNavItems = (pathname: string, programName: string) => {
           <li
             key={item.name}
             className={` ${
-              pathname === `/program/${programName}${item.path}`
+              pathname === `/program/${programCode}${item.path}`
                 ? "bg-blue-100 text-blue-600"
                 : "text-gray-600 hover:bg-gray-100 dark:hover:bg-white/[0.05]"
             }   rounded-md px-3 py-2 transition-colors duration-200 min-w-[100px] text-center`}
           >
-            {/* {pathname}
-            {`/program/${programName}${item.path}`} */}
-            <Link href={`/program/${programName}${item.path}`}>
+            {/* {pathname} <br />
+            {`/program/${programCode}${item.path}`} <br /> */}
+            <Link href={`/program/${programCode}${item.path}`}>
               {item.name}
             </Link>
           </li>
