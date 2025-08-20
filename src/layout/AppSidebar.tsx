@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState,useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -13,11 +13,8 @@ import {
   PlugInIcon,
 } from "../icons/index";
 import SidebarWidget from "./SidebarWidget";
-import {
-  IconPresentation,
-  IconBuildings,
-  IconPlus,
-} from "@tabler/icons-react";
+import { IconPresentation, IconBuildings, IconPlus } from "@tabler/icons-react";
+import { isEditor } from "@/actions/check_editor";
 
 type NavItem = {
   name: string;
@@ -73,7 +70,7 @@ const programItems: NavItem[] = [
     icon: <IconPlus />,
     name: "สร้างโครงการใหม่",
     path: "/program/create",
-  }
+  },
 ];
 
 const OrganizationItems: NavItem[] = [
@@ -86,7 +83,25 @@ const OrganizationItems: NavItem[] = [
     icon: <IconPlus />,
     name: "สร้าง organization ใหม่",
     path: "/organization/create",
-  }
+  },
+];
+
+const FoodItems: NavItem[] = [
+  {
+    icon: <GridIcon />,
+    name: "เมนูอาหารทั้งหมด",
+    path: "/food",
+  },
+  {
+    icon: <BoxCubeIcon />,
+    name: "เมนูอาหารรอการยืนยัน",
+    path: "/food/pending",
+  },
+  {
+    icon: <IconPlus />,
+    name: "เพิ่มเมนูใหม่ใน database",
+    path: "/food/create",
+  },
 ];
 
 const othersItems: NavItem[] = [
@@ -123,6 +138,16 @@ const othersItems: NavItem[] = [
 const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const pathname = usePathname();
+
+  const [is_editor, setIsEditor] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const checkEditor = async () => {
+      const result = await isEditor();
+      setIsEditor(result);
+    };
+    checkEditor();
+  }, []);
 
   const renderMenuItems = (
     navItems: NavItem[],
@@ -260,7 +285,7 @@ const AppSidebar: React.FC = () => {
   const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   // const isActive = (path: string) => path === pathname;
-   const isActive = useCallback((path: string) => path === pathname, [pathname]);
+  const isActive = useCallback((path: string) => path === pathname, [pathname]);
 
   useEffect(() => {
     // Check if the current path matches any submenu item
@@ -286,7 +311,7 @@ const AppSidebar: React.FC = () => {
     if (!submenuMatched) {
       setOpenSubmenu(null);
     }
-  }, [pathname,isActive]);
+  }, [pathname, isActive]);
 
   useEffect(() => {
     // Set the height of the submenu items when the submenu is opened
@@ -415,6 +440,25 @@ const AppSidebar: React.FC = () => {
               </h2>
               {renderMenuItems(OrganizationItems, "others")}
             </div>
+
+            {is_editor && (
+              <div className="">
+                <h2
+                  className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${
+                    !isExpanded && !isHovered
+                      ? "lg:justify-center"
+                      : "justify-start"
+                  }`}
+                >
+                  {isExpanded || isHovered || isMobileOpen ? (
+                    "Food Database"
+                  ) : (
+                    <HorizontaLDots />
+                  )}
+                </h2>
+                {renderMenuItems(FoodItems, "others")}
+              </div>
+            )}
 
             {/* Others */}
             {/* <div className="">

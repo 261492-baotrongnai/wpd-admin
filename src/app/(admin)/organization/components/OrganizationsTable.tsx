@@ -13,11 +13,10 @@ export default function OrganizaitonsTable({
 }: {
   tableData: Organization[];
 }) {
-
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
       <div className="max-w-full overflow-x-auto">
-        <div className="min-w-[1102px]">
+        <div className="">
           <Table>
             {/* Table Header */}
             <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
@@ -59,12 +58,12 @@ export default function OrganizaitonsTable({
                 <TableRow
                   key={data.id}
                   className="hover:bg-gray-50 dark:hover:bg-white/[0.05] cursor-pointer"
-                //   onClick={() => handleOrganizationClick(data)}
+                  //   onClick={() => handleOrganizationClick(data)}
                 >
-                  <TableCell className="px-5 py-4 sm:px-6 text-start">
+                  <TableCell className="px-5 py-4 sm:px-6 text-star truncatet">
                     {data.thai_name}
                   </TableCell>
-                  <TableCell className="px-5 py-4 sm:px-6 text-start">
+                  <TableCell className="px-5 py-4 sm:px-6 text-start truncate">
                     {data.eng_name}
                   </TableCell>
                   <TableCell className="px-5 py-4 sm:px-6 text-start">

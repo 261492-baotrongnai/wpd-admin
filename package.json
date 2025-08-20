@@ -28,6 +28,7 @@
     "autoprefixer": "^10.4.20",
     "axios": "^1.11.0",
     "flatpickr": "^4.6.13",
+    "fuse.js": "^7.1.0",
     "next": "^15.4.6",
     "react": "^19.0.0",
     "react-apexcharts": "^1.7.0",

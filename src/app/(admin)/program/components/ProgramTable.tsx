@@ -21,7 +21,9 @@ export default function ProgramsTable({ tableData }: ProgramsTableProps) {
   const popupRef = useRef<HTMLSpanElement | null>(null);
 
   const handleProgramClick = (program_detail: ProgramTable) => {
-    window.location.href = `/program/${encodeURIComponent(program_detail.program.code)}`;
+    window.location.href = `/program/${encodeURIComponent(
+      program_detail.program.code
+    )}`;
   };
 
   const handleCopy = (code: string, id: number) => {
@@ -34,7 +36,7 @@ export default function ProgramsTable({ tableData }: ProgramsTableProps) {
     <>
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
         <div className="max-w-full overflow-x-auto">
-          <div className="min-w-[1102px]">
+          <div className="">
             <Table>
               {/* Table Header */}
               <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
@@ -105,8 +107,9 @@ export default function ProgramsTable({ tableData }: ProgramsTableProps) {
                             className={
                               copiedId === data.program.id
                                 ? "text-green-500"
-                                : "text-gray-500 hover:text-blue-400"
-                            + " transition-colors duration-200"}
+                                : "text-gray-500 hover:text-blue-400" +
+                                  " transition-colors duration-200"
+                            }
                           />
                           {copiedId === data.program.id && (
                             <span
@@ -119,7 +122,7 @@ export default function ProgramsTable({ tableData }: ProgramsTableProps) {
                         </span>
                       )}
                     </TableCell>
-                    <TableCell className="px-5 py-4 sm:px-6 text-start">
+                    <TableCell className="px-5 py-4 sm:px-6 text-start truncate">
                       {data.program.organization?.thai_name ||
                         data.program.organization?.eng_name ||
                         "No organization"}
