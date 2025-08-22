@@ -24,6 +24,7 @@ interface PendingTableProps {
 import type { BadgeColor } from "@/components/ui/badge/Badge";
 import { useModal } from "@/hooks/useModal";
 import EditFoodModal from "./EditFoodForm";
+import { getSignedUrl } from "@/actions/get-waiting-confirmation";
 
 const renderBadge = (color: BadgeColor, text: string, show: boolean) => (
   <Badge
@@ -87,6 +88,21 @@ export default function PendingTable({ foodItems }: PendingTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const { isOpen, openModal, closeModal } = useModal();
   const [selectedFood, setSelectedFood] = useState<Food | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  useEffect(() => {
+    async function fetchImage() {
+      setImageUrl("");
+      if (selectedFood?.key) {
+        const signedUrl = await getSignedUrl(selectedFood.key);
+        console.log("Fetched signed URL:", signedUrl);
+        setImageUrl(signedUrl);
+      } else {
+        setImageUrl(null);
+      }
+    }
+
+    fetchImage();
+  }, [selectedFood]);
 
   function toggleDropdown() {
     setIsDropdownOpen(!isDropdownOpen);
@@ -339,9 +355,10 @@ export default function PendingTable({ foodItems }: PendingTableProps) {
       <Modal
         isOpen={isOpen}
         onClose={closeModal}
-        className="max-w-[584px] p-5 lg:p-10"
+        className="p-5 lg:p-10 relative"
+        imageUrl={imageUrl || undefined}
       >
-        {selectedFood && <EditFoodModal food={selectedFood} />}
+        {selectedFood && <EditFoodModal food={selectedFood} closeModal={closeModal} />}
       </Modal>
       <div className="w-full  ">
         {/* Search and filter */}

@@ -11,12 +11,16 @@ const nextConfig: NextConfig = {
         //   : undefined,
         // process.env.ALLOWED_ORIGIN, // Add this to your .env file
         "4pg05g3k-3000.asse.devtunnels.ms",
+        "wpd-bucket.sgp1.digitaloceanspaces.com",
         `${process.env.NEXT_PUBLIC_BASE_URL}`,
       ].filter((origin): origin is string => typeof origin === "string"),
     },
   },
   images: {
-    domains: ["wpd-bucket.sgp1.cdn.digitaloceanspaces.com"],
+    domains: [
+      "wpd-bucket.sgp1.cdn.digitaloceanspaces.com",
+      "wpd-bucket.sgp1.digitaloceanspaces.com",
+    ],
   },
   webpack(config: { module: { rules: { test: RegExp; use: string[] }[] } }) {
     config.module.rules.push({
