@@ -100,7 +100,7 @@ const FoodItems: NavItem[] = [
   {
     icon: <IconPlus />,
     name: "เพิ่มเมนูใหม่ใน database",
-    path: "/food/create",
+    path: "/food/add",
   },
 ];
 

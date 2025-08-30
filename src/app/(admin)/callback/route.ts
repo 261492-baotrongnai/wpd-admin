@@ -28,19 +28,19 @@ export async function GET(req: NextRequest) {
     response.cookies.set("IS_AUTHENTICATED", "true", {
       path: "/",
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
     });
     response.cookies.set("user_info", JSON.stringify(infoRes.data), {
       path: "/",
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
     });
     response.cookies.set("auth_token", auth_token, {
       path: "/",
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
     });
     return response;

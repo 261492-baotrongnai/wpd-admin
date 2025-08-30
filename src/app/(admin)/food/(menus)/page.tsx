@@ -1,25 +1,34 @@
-"use server";
-export default async function FoodMenusPage() {
-  // This page is for admin food menus management
-  return (
-    <div className="grid grid-cols-12 gap-4 md:gap-6">
-      <div className="col-span-12 space-y-6 xl:col-span-7">
-        <h1 className="text-xl font-semibold">Food Menus Management</h1>
-        <p>Manage your food menus here.</p>
-        {/* Add components for managing food menus */}
-      </div>
+import { isEditor } from "@/actions/check_editor";
+import { getMenus } from "@/actions/get-menus";
+import PageBreadcrumb from "@/components/common/PageBreadCrumb";
+import PageContainer from "@/components/container/PageContainer";
+import { Menu } from "@/types/menu.types";
+import MenuTable from "./components/MenuTable";
 
-      <div className="col-span-12 xl:col-span-5">
-        {/* Additional components or information can go here */}
-      </div>
-      <div className="col-span-12">
-        {/* Placeholder for future components */}
-        <p>More features coming soon!</p>
-      </div>
-      <div className="col-span-12 xl:col-span-5">
-        {/* Placeholder for additional features */}
-        <p>Stay tuned for updates!</p>
-      </div>
-    </div>
+export default async function MenusPage() {
+  const is_editor = await isEditor();
+  if (!is_editor) {
+    return <div>You do not have permission to view this page.</div>;
+  }
+  const menus: Menu[] = await getMenus();
+
+  const sortByRecent = (a: Menu, b: Menu) => {
+    const dateA = new Date(a.updatedAt ?? a.createdAt ?? 0);
+    const dateB = new Date(b.updatedAt ?? b.createdAt ?? 0);
+    return dateB.getTime() - dateA.getTime();
+  };
+
+  await menus.sort(sortByRecent);
+
+  return (
+    <PageContainer
+      title="จัดการเมนูอาหาร | WanPorDee Admin"
+      description="Manage food menus"
+    >
+      
+      <PageBreadcrumb pageTitle="จัดการเมนูอาหาร" />
+      
+      <MenuTable menuItems={menus} />
+    </PageContainer>
   );
 }

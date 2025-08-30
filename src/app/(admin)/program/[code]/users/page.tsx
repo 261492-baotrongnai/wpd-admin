@@ -18,6 +18,7 @@ export default async function ProgramUserPage() {
   }
 
   const users = await getProgramUsers(programDetail?.program.id);
+  console.log("Fetched users:", users);
   return (
     <>
       <ComponentCard title={`ผู้เข้าร่วมโครงการ`}>

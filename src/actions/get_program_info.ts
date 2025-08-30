@@ -14,7 +14,7 @@ export async function getProgramByCode(code: string) {
     const apiClient = await getApiClient(authToken);
     const response = await apiClient.get(`/program/find-by-code?code=${code}`);
     console.log("Program fetched successfully:", response.data);
-    // await setProgramNameCookie(response.data.name);
+
     if (response.status !== 200) {
       throw new Error("Failed to fetch program by code");
     }
@@ -37,6 +37,8 @@ export async function getProgramInfo(programId: number) {
     const apiClient = await getApiClient(authToken);
     const programs = await apiClient.get(`/program/${programId}/info`);
 
+    await setProgramIdCookie(programId);
+    console.log("Program info data:", cookieStore.get("program_detail")?.value);
     return programs.data;
   } catch (error) {
     console.error("Error fetching program info:", error);
@@ -66,11 +68,16 @@ export async function getProgramTable() {
   }
 }
 
-export async function setProgramNameCookie(name: string) {
+export async function setProgramIdCookie(programId: number) {
   const cookieStore = await cookies();
-  cookieStore.set("program_name_header", name, {
-    path: "/",
-    sameSite: "lax",
-    secure: true,
-  });
+  await cookieStore.set(
+    "program_detail",
+    JSON.stringify({ program: { id: programId } }),
+    {
+      path: "/",
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+    }
+  );
 }

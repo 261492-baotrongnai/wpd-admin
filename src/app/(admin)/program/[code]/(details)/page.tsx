@@ -1,10 +1,14 @@
-"use server";
+"use client";
 
-import { getProgramByCode } from "@/actions/get_program_info";
+import {
+  getProgramByCode,
+  setProgramIdCookie,
+} from "@/actions/get_program_info";
 import ComponentCard from "@/components/common/ComponentCard";
 import EditableInfoBox from "@/app/(admin)/program/components/EditableInfoBox";
 import { GroupIcon } from "@/icons";
 import { Program } from "@/types/program.type";
+import { useEffect, useState } from "react";
 
 const infoBox = (label: string, info: string) => {
   return (
@@ -35,21 +39,32 @@ const userMetrics = (label: string, count: number) => {
   );
 };
 
-export default async function ProgramDetailPage({
+export default function ProgramDetailPage({
   params,
 }: {
   params: Promise<{ code: string }>;
 }) {
-  let detail: Program;
-  const { code } = await params;
-  console.log("Program code:", code);
-  try {
-    detail = await getProgramByCode(code);
+  const [code, setCode] = useState<string>("");
+  const [detail, setDetail] = useState<Program>({} as Program);
 
-    console.log("Program detail:", detail);
-  } catch {
-    return <p>Program data is corrupted.</p>;
-  }
+  useEffect(() => {
+    const fetchCode = async () => {
+      const p = await params;
+      setCode(p.code);
+      console.log("Program code:", p.code);
+    };
+    fetchCode();
+  }, [params]);
+
+  useEffect(() => {
+    if (!code) return;
+    const fetchData = async () => {
+      const detail = await getProgramByCode(code);
+      await setDetail(detail);
+      await setProgramIdCookie(detail.id);
+    };
+    fetchData();
+  }, [code]);
 
   return (
     <>
@@ -57,27 +72,31 @@ export default async function ProgramDetailPage({
         {/* <!-- Program Info Card --> */}
         <div className="col-span-12 xl:col-span-8">
           <ComponentCard title={`รายละเอียดโครงการ`}>
-            <div className="space-y-10 flex flex-col">
-              {/* {infoBox("Program Name", detail.program.name)} */}
-              <EditableInfoBox
-                programId={detail.id}
-                label="Program Name"
-                info={detail.name}
-                editable={true}
-              />
-              <EditableInfoBox
-                programId={detail.id}
-                label="Organization"
-                info={detail.organization?.thai_name || "N/A"}
-                editable={true}
-                type="select"
-              />
-              {infoBox("Code", detail.code)}
-              {infoBox(
-                "Created at",
-                new Date(detail.createdAt).toLocaleDateString()
-              )}
-            </div>
+            {!detail?.id ? (
+              <div>Loading...</div>
+            ) : (
+              <div className="space-y-10 flex flex-col">
+                {/* {infoBox("Program Name", detail.program.name)} */}
+                <EditableInfoBox
+                  programId={detail.id}
+                  label="Program Name"
+                  info={detail.name}
+                  editable={true}
+                />
+                <EditableInfoBox
+                  programId={detail.id}
+                  label="Organization"
+                  info={detail.organization?.thai_name || "N/A"}
+                  editable={true}
+                  type="select"
+                />
+                {infoBox("Code", detail.code)}
+                {infoBox(
+                  "Created at",
+                  new Date(detail.createdAt).toLocaleDateString()
+                )}
+              </div>
+            )}
           </ComponentCard>
         </div>
         {/* <!-- User Metric --> */}

@@ -6,7 +6,7 @@ export async function getProgramUsers(programId: number): Promise<User[]> {
   try {
     const token = await getAuthToken();
     const apiClient = await getApiClient(token);
-
+    console.log(`Fetching users for program ID: ${programId}`);
     const response = await apiClient.get(`/program/${programId}/users`);
     return response.data.users;
   } catch (error) {

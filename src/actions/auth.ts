@@ -3,7 +3,11 @@ import { cookies } from "next/headers";
 
 export async function setAuthenticated(value: "true" | "false") {
   const cookieStore = await cookies();
-  cookieStore.set("IS_AUTHENTICATED", value, { path: "/" });
+  cookieStore.set("IS_AUTHENTICATED", value, {
+    path: "/",
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+  });
 }
 
 export async function isAuthenticated(): Promise<"true" | "false"> {
@@ -14,7 +18,11 @@ export async function isAuthenticated(): Promise<"true" | "false"> {
 
 export async function setAuthToken(token: string) {
   const cookieStore = await cookies();
-  cookieStore.set("auth_token", token, { path: "/" });
+  cookieStore.set("auth_token", token, {
+    path: "/",
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+  });
 }
 
 export async function getAuthToken(): Promise<string | undefined> {
