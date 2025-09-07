@@ -1,34 +1,60 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { getApiClient } from "@/services/api.service";
+
+const PUBLIC_PATHS = new Set(["/signin", "/authentication/login", "/callback"]);
 
 export async function middleware(request: NextRequest) {
-  const token = request.cookies.get("auth_token")?.value;
-  let isAuthenticated = !!token;
+  const { pathname } = request.nextUrl;
 
-  try {
-    const apiClient = await getApiClient(token);
-    await apiClient.get("/auth/validate-token");
-  } catch (error) {
-    console.error("Token validation error:", error);
-    isAuthenticated = false;
-  }
-
-  if (
-    request.nextUrl.pathname.startsWith("/authentication/login") ||
-    request.nextUrl.pathname.startsWith("/signin") ||
-    request.nextUrl.pathname.startsWith("/_next") ||
-    request.nextUrl.pathname.startsWith("/images") ||
-    request.nextUrl.pathname.startsWith("/api") ||
-    request.nextUrl.pathname.startsWith("/callback")
-  ) {
+  // Public paths: allow through
+  if (PUBLIC_PATHS.has(pathname)) {
     return NextResponse.next();
   }
 
+  const token = request.cookies.get("auth_token")?.value;
+  if (!token) {
+    return NextResponse.redirect(new URL("/signin", request.url));
+  }
+
+  let isAuthenticated = false;
+
+  try {
+    // Prefer absolute API base (env) so we don't hit Next middleware again.
+    const apiBase = process.env.NEXT_PUBLIC_API_URL;
+    if (!apiBase) {
+      console.warn("API base URL missing");
+      return NextResponse.redirect(new URL("/signin", request.url));
+    }
+
+    const res = await fetch(`${apiBase}/auth/validate-token`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
+      },
+      // Prevent following backend redirects (e.g., to /signin)
+      redirect: "manual",
+      cache: "no-store",
+    });
+
+    if (res.ok) {
+      isAuthenticated = true;
+    } else {
+      // 3xx/401/403 → treat as invalid
+      isAuthenticated = false;
+    }
+  } catch (e) {
+    console.error("Token validation failure (treated as unauthenticated):", e);
+    isAuthenticated = false;
+  }
+
   if (!isAuthenticated) {
-    console.log("User not authenticated, redirecting to /signin");
     return NextResponse.redirect(new URL("/signin", request.url));
   }
 
   return NextResponse.next();
 }
+
+// Limit middleware to non-public, non-static paths
+export const config = {
+  matcher: ["/((?!_next|images|api|signin|authentication/login|callback).*)"],
+};
