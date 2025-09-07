@@ -115,8 +115,11 @@ export default function EditFoodForm({ food, closeModal }: EditProps) {
         )}
 
         <div className="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2">
+          <div className="col-span-2 flex-row">
+            <span className="text-gray-500">ชื่อเมนูที่ป้อนมาโดย user : </span> <span className="text-gray-400">{newFood.name}</span>
+          </div>
           <div className="col-span-1">
-            <Label>Name</Label>
+            <Label>Edited Name</Label>
             <Input
               type="text"
               defaultValue={newFood.name}
