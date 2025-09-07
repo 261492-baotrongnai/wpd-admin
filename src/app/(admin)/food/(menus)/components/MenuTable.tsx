@@ -12,7 +12,7 @@ import {
 import Badge from "@/components/ui/badge/Badge";
 import Button from "@/components/ui/button/Button";
 import { IconFilter, IconSearch, IconX } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { Dropdown } from "@/components/ui/dropdown/Dropdown";
 import { DropdownItem } from "@/components/ui/dropdown/DropdownItem";
 import { Modal } from "@/components/ui/modal";
@@ -27,6 +27,7 @@ import { Menu } from "@/types/menu.types";
 import EditMenuForm from "./EditMenuForm";
 import Pagination from "@/components/tables/Pagination";
 import CategoryCount from "./CategoryCount";
+import { deleteFood } from "@/actions/delete-food";
 
 const renderBadge = (color: BadgeColor, text: string, show: boolean) => (
   <Badge
@@ -95,8 +96,83 @@ export default function MenuTable({ menuItems }: MenuTableProps) {
   const { isOpen, openModal, closeModal } = useModal();
   const [selectedMenu, setSelectedMenu] = useState<Menu | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  // const [deleteItems, setDeleteItems] = useState<number[]>([]);
+
+  // Selection state
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [optimisticItems, setOptimisticItems] = useState<Menu[] | null>(null);
+
+  // Transition state for server action
+  const [isPending, startTransition] = useTransition();
+
   const itemsPerPage = 10;
+
+  // Keep filteredItems updated; also clear selections for removed rows
+  useEffect(() => {
+    setSelectedIds((prev) =>
+      prev.filter((id) => filteredItems.some((it) => it.id === id))
+    );
+  }, [filteredItems]);
+
+  // Bulk delete handler using server action
+  function handleBulkDelete() {
+    if (selectedIds.length === 0 || isPending) return;
+
+    const ids = [...selectedIds];
+
+    // Optimistic UI: remove items locally
+    const prev = filteredItems;
+    setOptimisticItems(prev);
+    setFilteredItems(prev.filter((item) => !ids.includes(item.id)));
+    setSelectedIds((prevSel) => prevSel.filter((id) => !ids.includes(id)));
+
+    startTransition(async () => {
+      const result = await deleteFood(ids);
+      if (!result.success) {
+        // Revert on failure
+        if (optimisticItems) setFilteredItems(optimisticItems);
+        console.error(result.message);
+      }
+      setOptimisticItems(null);
+    });
+  }
+
+  function toggleSelectSingle(id: number) {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  }
+
+  // Calculate total pages
+  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+
+  // Get items for current page
+  const paginatedItems = filteredItems.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // function toggleSelectAllCurrentPage() {
+  //   const pageIds = paginatedItems.map((i) => i.id);
+  //   const allSelected = pageIds.every((id) => selectedIds.includes(id));
+  //   if (allSelected) {
+  //     setSelectedIds((prev) => prev.filter((id) => !pageIds.includes(id)));
+  //   } else {
+  //     setSelectedIds((prev) => Array.from(new Set([...prev, ...pageIds])));
+  //   }
+  // }
+
+  // Header checkbox indeterminate handling
+  const headerCheckboxRef = useRef<HTMLInputElement | null>(null);
+  useEffect(() => {
+    const pageIds = paginatedItems.map((i) => i.id);
+    const checkedCount = pageIds.filter((id) =>
+      selectedIds.includes(id)
+    ).length;
+    if (headerCheckboxRef.current) {
+      headerCheckboxRef.current.indeterminate =
+        checkedCount > 0 && checkedCount < pageIds.length;
+    }
+  }, [paginatedItems, selectedIds]);
 
   function toggleDropdown() {
     setIsDropdownOpen(!isDropdownOpen);
@@ -327,15 +403,6 @@ export default function MenuTable({ menuItems }: MenuTableProps) {
     );
   };
 
-  // Calculate total pages
-  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
-
-  // Get items for current page
-  const paginatedItems = filteredItems.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
   // Reset to first page when filters/search change
   useEffect(() => {
     setCurrentPage(1);
@@ -368,6 +435,10 @@ export default function MenuTable({ menuItems }: MenuTableProps) {
       );
     });
   };
+
+  // const pageIds = paginatedItems.map((i) => i.id);
+  // const allPageSelected =
+  //   pageIds.length > 0 && pageIds.every((id) => selectedIds.includes(id));
 
   return (
     <div className="grid grid-cols-4 gap-4">
@@ -425,8 +496,25 @@ export default function MenuTable({ menuItems }: MenuTableProps) {
                       >
                         category
                       </TableCell>
-                      <TableCell isHeader className="w-0">
-                        {" "}
+                      <TableCell isHeader className="w-0 pr-4">
+                        <div className="flex justify-center items-center gap-2">
+                          <Button
+                            variant="delete"
+                            className="h-8"
+                            disabled={selectedIds.length === 0 || isPending}
+                            onClick={() => {
+                              handleBulkDelete();
+                            }}
+                          >
+                            {isPending
+                              ? "Deleting..."
+                              : `Delete Selected${
+                                  selectedIds.length
+                                    ? ` (${selectedIds.length})`
+                                    : ""
+                                }`}
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   </TableHeader>
@@ -435,31 +523,44 @@ export default function MenuTable({ menuItems }: MenuTableProps) {
                   <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
                     {paginatedItems.length === 0 ? (
                       <TableRow>
-                        <TableCell className="px-5 py-8 text-center text-gray-500 dark:text-gray-400">
+                        <td
+                          colSpan={5}
+                          className="px-5 py-8 text-center text-gray-500 dark:text-gray-400"
+                        >
                           No items match the current filters
-                        </TableCell>
+                        </td>
                       </TableRow>
                     ) : (
-                      paginatedItems.map((data) => (
-                        <TableRow
-                          key={data.id}
-                          className="hover:bg-gray-50 dark:hover:bg-white/[0.05] cursor-pointer"
-                          onClick={() => MenuClick(data)}
-                        >
-                          <TableCell className="px-5 py-4 sm:px-6 text-start truncate">
-                            {data.name}
-                          </TableCell>
-                          <TableCell className="px-5 py-4 sm:px-6 text-start truncate">
-                            {data.grade}
-                          </TableCell>
-                          <TableCell className="px-5 py-4 sm:px-6 text-start truncate">
-                            {data.category}
-                          </TableCell>
-                          <TableCell className="px-5 py-4 sm:px-6 text-end">
-                            {""}
-                          </TableCell>
-                        </TableRow>
-                      ))
+                      paginatedItems.map((item) => {
+                        const checked = selectedIds.includes(item.id);
+                        return (
+                          <TableRow
+                            key={item.id}
+                            className="hover:bg-gray-50 dark:hover:bg-white/[0.05] cursor-pointer"
+                            onClick={() => MenuClick(item)}
+                          >
+                            <TableCell className="px-5 py-4 sm:px-6 text-start truncate">
+                              {item.name}
+                            </TableCell>
+                            <TableCell className="px-5 py-4 sm:px-6 text-start truncate">
+                              {item.grade}
+                            </TableCell>
+                            <TableCell className="px-5 py-4 sm:px-6 text-start truncate">
+                              {item.category}
+                            </TableCell>
+                            <TableCell className="px-3 py-4 flex justify-center ">
+                              <input
+                                type="checkbox"
+                                aria-label={`Select ${item.name}`}
+                                checked={checked}
+                                onChange={() => toggleSelectSingle(item.id)}
+                                onClick={(e) => e.stopPropagation()}
+                                className="cursor-pointer py-auto"
+                              />
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })
                     )}
                   </TableBody>
                 </Table>

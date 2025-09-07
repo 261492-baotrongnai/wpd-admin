@@ -3,7 +3,7 @@ import React, { ReactNode } from "react";
 interface ButtonProps {
   children: ReactNode; // Button text or content
   size?: "sm" | "md"; // Button size
-  variant?: "primary" | "outline" | "ghost" | "confirm" | "danger"; // Button variant
+  variant?: "primary" | "outline" | "ghost" | "confirm" | "danger" | "delete"; // Button variant
   startIcon?: ReactNode; // Icon before the text
   endIcon?: ReactNode; // Icon after the text
   onClick?: () => void; // Click handler
@@ -39,6 +39,8 @@ const Button: React.FC<ButtonProps> = ({
       "bg-cute-success-main text-white hover:bg-cute-success-dark disabled:bg-cute-success-light",
     danger:
       "bg-cute-orange-main text-white hover:bg-cute-orange-dark disabled:bg-cute-orange-light",
+    delete:
+      "bg-white text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-cute-orange-main hover:text-white hover:ring-0  ",
   };
 
   return (
