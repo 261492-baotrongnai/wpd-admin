@@ -30,7 +30,7 @@ const CategoryOptions = [
 
 export default function EditFoodForm({ food, closeModal }: EditProps) {
   const [newFood, setNewFood] = useState<ConfirmingFood>(food);
-  const [inputName, setInputName] = useState(food.name);
+  const inputName = food.name;
   const [is_confirmed, setIsConfirmed] = useState(food.is_confirmed);
   const [is_rejected, setIsRejected] = useState(food.is_rejected);
   const [categoryError, setCategoryError] = useState(false);
