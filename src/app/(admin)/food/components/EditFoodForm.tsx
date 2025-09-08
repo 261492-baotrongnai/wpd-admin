@@ -30,6 +30,7 @@ const CategoryOptions = [
 
 export default function EditFoodForm({ food, closeModal }: EditProps) {
   const [newFood, setNewFood] = useState<ConfirmingFood>(food);
+  const [inputName, setInputName] = useState(food.name);
   const [is_confirmed, setIsConfirmed] = useState(food.is_confirmed);
   const [is_rejected, setIsRejected] = useState(food.is_rejected);
   const [categoryError, setCategoryError] = useState(false);
@@ -116,7 +117,8 @@ export default function EditFoodForm({ food, closeModal }: EditProps) {
 
         <div className="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2">
           <div className="col-span-2 flex-row">
-            <span className="text-gray-500">ชื่อเมนูที่ป้อนมาโดย user : </span> <span className="text-gray-400">{newFood.name}</span>
+            <span className="text-gray-500">ชื่อเมนูที่ป้อนมาโดย user : </span>{" "}
+            <span className="text-gray-400">{inputName}</span>
           </div>
           <div className="col-span-1">
             <Label>Edited Name</Label>
