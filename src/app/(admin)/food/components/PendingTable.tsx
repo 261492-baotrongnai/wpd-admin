@@ -1,6 +1,7 @@
 "use client";
 import { Food } from "@/types/food.types";
 import Fuse from "fuse.js";
+import Pagination from "@/components/tables/Pagination";
 
 import {
   Table,
@@ -89,6 +90,25 @@ export default function PendingTable({ foodItems }: PendingTableProps) {
   const { isOpen, openModal, closeModal } = useModal();
   const [selectedFood, setSelectedFood] = useState<Food | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+  // Pagination state (added)
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  // Derived pagination values (added)
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredItems.length / itemsPerPage)
+  );
+  const paginatedItems = filteredItems.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterBadges, searchTerm]);
+
   useEffect(() => {
     async function fetchImage() {
       setImageUrl("");
@@ -358,7 +378,9 @@ export default function PendingTable({ foodItems }: PendingTableProps) {
         className="p-5 lg:p-10 relative"
         imageUrl={imageUrl || undefined}
       >
-        {selectedFood && <EditFoodModal food={selectedFood} closeModal={closeModal} />}
+        {selectedFood && (
+          <EditFoodModal food={selectedFood} closeModal={closeModal} />
+        )}
       </Modal>
       <div className="w-full  ">
         {/* Search and filter */}
@@ -408,14 +430,18 @@ export default function PendingTable({ foodItems }: PendingTableProps) {
 
                 {/* Table Body */}
                 <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                  {filteredItems.length === 0 ? (
+                  {paginatedItems.length === 0 ? (
                     <TableRow>
-                      <TableCell className="px-5 py-8 text-center text-gray-500 dark:text-gray-400">
-                        No items match the current filters
+                      <TableCell
+                        className="px-5 py-8 text-center text-gray-500 dark:text-gray-400"
+                      >
+                        <td colSpan={3} className="w-full text-center border-0 bg-transparent p-0">
+                          No items match the current filters
+                        </td>
                       </TableCell>
                     </TableRow>
                   ) : (
-                    filteredItems.map((data) => (
+                    paginatedItems.map((data) => (
                       <TableRow
                         key={data.id}
                         className="hover:bg-gray-50 dark:hover:bg-white/[0.05] cursor-pointer"
@@ -448,6 +474,18 @@ export default function PendingTable({ foodItems }: PendingTableProps) {
                 </TableBody>
               </Table>
             </div>
+          </div>
+        </div>
+
+        {/* Pagination footer (added) */}
+        <div className="mt-4 flex flex-col md:flex-row md:justify-between gap-2">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+          <div className="text-gray-500 dark:text-gray-400 my-auto">
+            Page {currentPage} of {totalPages} | {paginatedItems.length} items
           </div>
         </div>
       </div>

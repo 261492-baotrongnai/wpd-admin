@@ -10,6 +10,8 @@ export interface Food {
   grading_by_ai: boolean;
   is_confirmed: boolean;
   is_rejected: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface ConfirmingFood {

@@ -12,6 +12,14 @@ export default async function PendingFoodMenuPage() {
   }
   const pendingFoodItems = await getWaitingConfirmation();
 
+  const sortByRecent = (a: Food, b: Food) => {
+    const dateA = new Date(a.updatedAt ?? a.createdAt ?? 0);
+    const dateB = new Date(b.updatedAt ?? b.createdAt ?? 0);
+    return dateB.getTime() - dateA.getTime();
+  };
+
+  pendingFoodItems.sort(sortByRecent);
+
   // Assign priority: 0 = waiting, 1 = confirmed, 2 = rejected
   pendingFoodItems.sort((a, b) => {
     const getPriority = (item: Food) => {
