@@ -13,11 +13,13 @@ export async function getProgramByCode(code: string) {
     console.log("Auth token found:", authToken);
     const apiClient = await getApiClient(authToken);
     const response = await apiClient.get(`/program/find-by-code?code=${code}`);
-    console.log("Program fetched successfully:", response.data);
+    // console.log("Program fetched successfully:", response.data);
 
     if (response.status !== 200) {
       throw new Error("Failed to fetch program by code");
     }
+    await setProgramIdCookie(response.data.id);
+    console.log("Program info data:", cookieStore.get("program_detail")?.value);
     return response.data;
   } catch (error) {
     console.error("Error fetching program by code:", error);

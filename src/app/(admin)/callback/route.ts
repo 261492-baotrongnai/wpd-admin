@@ -17,6 +17,7 @@ export async function GET(req: NextRequest) {
 
   if (code) {
     const lineTokenRes = await getLineToken(code);
+
     const auth_token = await login(lineTokenRes.data.id_token);
     await setAuthToken(auth_token);
     const infoRes = await getInfo();
@@ -43,6 +44,7 @@ export async function GET(req: NextRequest) {
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
     });
+
     return response;
   }
 }

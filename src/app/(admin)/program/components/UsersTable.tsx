@@ -6,10 +6,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { User } from "@/types/user.types";
+import { UserWithProfile } from "@/types/user.types";
+import Image from "next/image";
 
 interface UsersTableProps {
-  tableData: User[];
+  tableData: UserWithProfile[];
 }
 
 function lastRecord(lastRecordedAt: string): string {
@@ -41,15 +42,15 @@ function lastRecord(lastRecordedAt: string): string {
 }
 
 export default function UsersTable({ tableData }: UsersTableProps) {
-  const handleUserClick = (user: User) => {
+  const handleUserClick = (user: UserWithProfile) => {
     // You cannot use server-side cookies in a client component.
     // Use document.cookie or a client-side library instead.
     document.cookie = `user_detail=${encodeURIComponent(
       JSON.stringify(user)
     )}; path=/`;
-    // window.location.href = `/user/${encodeURIComponent(
-    //   user.id
-    // )}`;
+    // Redirect to user detail page without 'users' ex: /program/[code]/[id]
+
+    window.location.href = `/user/${user.id}`;
   };
 
   return (
@@ -65,13 +66,13 @@ export default function UsersTable({ tableData }: UsersTableProps) {
                     isHeader
                     className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                   >
-                    ID
+                    {""}
                   </TableCell>
                   <TableCell
                     isHeader
                     className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                   >
-                    internalId
+                    Name
                   </TableCell>
                   <TableCell
                     isHeader
@@ -84,30 +85,55 @@ export default function UsersTable({ tableData }: UsersTableProps) {
 
               {/* Table Body */}
               <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                {tableData.map((data) => (
-                  <TableRow
-                    key={data.id}
-                    className="hover:bg-gray-50 dark:hover:bg-white/[0.05] cursor-pointer"
-                    onClick={() => handleUserClick(data)}
-                  >
-                    <TableCell className="px-5 py-4 sm:px-6 text-start">
-                      {data.id}
+                {tableData.length === 0 ? (
+                  // skeleton loading state
+                  <TableRow>
+                    <TableCell className="px-5 py-4 text-start">
+                      <div className="mx-auto h-10 w-10 rounded-full bg-gray-200 animate-pulse" />
                     </TableCell>
-                    <TableCell className="px-5 py-4 sm:px-6 text-start">
-                      <div className="flex items-center gap-3">
-                        <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                          {data.internalId}
-                        </span>
-                      </div>
+                    <TableCell className="px-5 py-4 text-start">
+                      <div className="h-4 w-32 rounded bg-gray-200 animate-pulse mx-auto" />
                     </TableCell>
-                    <TableCell className="px-5 py-4 sm:px-6 text-start">
-                      <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                        {lastRecord(data.last_recorded_at)}
-                        {/* {data.last_recorded_at ? ` (${new Date(data.last_recorded_at).toLocaleDateString()})` : ""} */}
-                      </span>
+                    <TableCell className="px-5 py-4 text-start">
+                      <div className="h-4 w-24 rounded bg-gray-200 animate-pulse mx-auto" />
                     </TableCell>
                   </TableRow>
-                ))}
+                ) : (
+                  tableData.map((data) => (
+                    <TableRow
+                      key={data.id}
+                      className="hover:bg-gray-50 dark:hover:bg-white/[0.05] cursor-pointer"
+                      onClick={() => handleUserClick(data)}
+                    >
+                      <TableCell className="px-5 py-4 sm:px-6 text-start">
+                        {data.profile !== null ? (
+                          <Image
+                            src={data.profile.pictureUrl}
+                            alt={data.profile.displayName}
+                            width={40}
+                            height={40}
+                            className="h-10 w-10 rounded-full"
+                          />
+                        ) : (
+                          <div className="h-10 w-10 rounded-full bg-gray-200" />
+                        )}
+                      </TableCell>
+                      <TableCell className="px-5 py-4 sm:px-6 text-start">
+                        <div className="flex items-center gap-3">
+                          <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
+                            {data.profile?.displayName || "No Name"}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="px-5 py-4 sm:px-6 text-start">
+                        <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
+                          {lastRecord(data.last_recorded_at)}
+                          {/* {data.last_recorded_at ? ` (${new Date(data.last_recorded_at).toLocaleDateString()})` : ""} */}
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
               </TableBody>
             </Table>
           </div>

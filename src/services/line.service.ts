@@ -40,3 +40,17 @@ export async function getLineToken(code: string) {
     throw error;
   }
 }
+
+import * as jose from "jose";
+export async function getLineProfile(idToken: string): Promise<string> {
+  try {
+    const decoded = jose.decodeJwt(idToken);
+    if (typeof decoded.name !== "string") {
+      throw new Error("Failed to get user name from LINE profile");
+    }
+    return decoded.name;
+  } catch (error) {
+    console.error("Error decoding LINE idToken:", error);
+    throw error;
+  }
+}

@@ -8,6 +8,7 @@ export interface Food {
   description: string;
   grade: "A" | "B" | "C";
   grading_by_ai: boolean;
+  grading_by_rule: boolean;
   is_confirmed: boolean;
   is_rejected: boolean;
   createdAt: Date;
@@ -20,6 +21,7 @@ export interface ConfirmingFood {
   description: string;
   grade: "A" | "B" | "C";
   grading_by_ai: boolean;
+  grading_by_rule: boolean;
   is_confirmed: boolean;
   is_rejected: boolean;
   meal: Meal | null;

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const PUBLIC_PATHS = new Set(["/signin", "/authentication/login", "/callback"]);
+const PUBLIC_PATHS = new Set(["/signin", "/callback", "/request-approval"]);
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -56,5 +56,5 @@ export async function middleware(request: NextRequest) {
 
 // Limit middleware to non-public, non-static paths
 export const config = {
-  matcher: ["/((?!_next|images|api|signin|authentication/login|callback).*)"],
+  matcher: ["/((?!_next|images|api|signin|request-approval|callback).*)"],
 };

@@ -1,13 +1,16 @@
+"use server";
 import { getApiClient } from "@/services/api.service";
 import { getAuthToken } from "./auth";
-import { User } from "@/types/user.types";
+import { UserWithProfile } from "@/types/user.types";
 
-export async function getProgramUsers(programId: number): Promise<User[]> {
+export async function getProgramUsers(
+  code: string
+): Promise<UserWithProfile[]> {
   try {
     const token = await getAuthToken();
     const apiClient = await getApiClient(token);
-    console.log(`Fetching users for program ID: ${programId}`);
-    const response = await apiClient.get(`/program/${programId}/users`);
+    console.log(`Fetching users for program code: ${code}`);
+    const response = await apiClient.get(`/program/${code}/users`);
     return response.data.users;
   } catch (error) {
     console.error("Error fetching program users:", error);

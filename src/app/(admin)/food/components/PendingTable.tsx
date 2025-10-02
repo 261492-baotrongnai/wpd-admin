@@ -432,12 +432,8 @@ export default function PendingTable({ foodItems }: PendingTableProps) {
                 <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
                   {paginatedItems.length === 0 ? (
                     <TableRow>
-                      <TableCell
-                        className="px-5 py-8 text-center text-gray-500 dark:text-gray-400"
-                      >
-                        <td colSpan={3} className="w-full text-center border-0 bg-transparent p-0">
-                          No items match the current filters
-                        </td>
+                      <TableCell className="px-5 py-8 text-center text-gray-500 dark:text-gray-400">
+                        No items match the current filters
                       </TableCell>
                     </TableRow>
                   ) : (

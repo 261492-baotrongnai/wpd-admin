@@ -147,7 +147,11 @@ const ProgramHeaderTabs: React.FC = () => {
   );
 };
 
-const renderNavItems = (pathname: string, programName: string, programCode: string) => {
+const renderNavItems = (
+  pathname: string,
+  programName: string,
+  programCode: string
+) => {
   return (
     <nav>
       <ul className="flex space-x-4 justify-center bg-white p-1 rounded-md w-fit mr-auto">

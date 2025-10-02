@@ -3,8 +3,9 @@ import { User } from "./user.types";
 
 export interface Meal {
   id: number;
+  signedUrl: string | null;
   imageName: string | null;
-  mealType: "breakfast" | "lunch" | "dinner";
+  mealType: "breakfast" | "lunch" | "dinner" | "snack";
   avgScore: number;
   avgGrade: "A" | "B" | "C";
   maxScore: number;
